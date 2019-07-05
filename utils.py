@@ -1,3 +1,21 @@
+import tensorflow as tf
+import os
+import matplotlib.pyplot as plt
+import numpy as np
+from tensorflow.keras.models import model_from_json, load_model
+from mtcnn.mtcnn import MTCNN
+from pathlib import Path as path
+import json
+from PIL import ImageDraw, ImageFont
+from matplotlib import patches, patheffects
+import pdb ### Python debuger
+import os ### Navigate Through Dirrectory
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import collections
+import cv2
+
 def crop_face(img, bb):
     x1, y1, width, height = bb
     x1,y1 = abs(x1), abs(y1)
@@ -8,7 +26,8 @@ def extract_feature( feature_extractor, img, bb):
     insz = feature_extractor.input_shape
     img = crop_face(img, bb)
     img = resize(img,(insz[1],insz[2]))
-    image_feature = feature_extractor.predict(normalize(tmp1))
+    img = normalize(img).reshape((1, insz[1],insz[2], insz[3]))
+    image_feature = feature_extractor.predict(img)
     return image_feature
 
 def resize(img, size):
@@ -24,7 +43,13 @@ def show_img(img, figsize=None, ax=None):
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
     return ax
-
+def detect_faces(img):
+    detector = MTCNN()
+    results = detector.detect_faces(img)
+    bb_lst =[]
+    for i in results:
+        bb_lst.append(i["box"])
+    return bb_lst
 ### Outline
 def outline(ax, lw):
     """
