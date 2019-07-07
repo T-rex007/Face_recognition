@@ -31,8 +31,8 @@ def extract_feature( feature_extractor, img, bb):
     return image_feature
 
 def resize(img, size):
-    tmp1 = tf.image.resize_images(img, size)
-    return tmp1.numpy().reshape((size[0], size[1],tmp.shape[-1]))
+    tmp1 = tf.image.resize(img, size)
+    return tmp1.numpy().reshape((size[0], size[1],tmp1.shape[-1]))
 
 def normalize(img):
     return img/255
@@ -43,6 +43,7 @@ def show_img(img, figsize=None, ax=None):
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
     return ax
+
 def detect_faces(img):
     detector = MTCNN()
     results = detector.detect_faces(img)
@@ -50,6 +51,7 @@ def detect_faces(img):
     for i in results:
         bb_lst.append(i["box"])
     return bb_lst
+
 ### Outline
 def outline(ax, lw):
     """
