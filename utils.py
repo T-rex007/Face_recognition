@@ -1,3 +1,7 @@
+"""
+Author: Tyrel Cadogan
+Email: shaqc777@yahoo.com
+"""
 import tensorflow as tf
 import os
 import matplotlib.pyplot as plt
@@ -85,3 +89,8 @@ def showImgWithAnn(image, annotations):
         b = bb_hw(b)
         draw_bb(a, b)
         write_txt(a, b[:2], categ[c])
+
+
+def feat_distance_cosine(feat1, feat2):
+    similarity = np.dot(feat1 / np.linalg.norm(feat1, 2), feat2 / np.linalg.norm(feat2, 2))
+    return similarity
