@@ -2,16 +2,19 @@
 Author: Tyrel Cadogan
 Email: shaqc777@yahoo.com
 """
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from PIL import ImageDraw, ImageFont
+from matplotlib import patches, patheffects
+from tensorflow.keras.models import model_from_json, load_model
+from mtcnn.mtcnn import MTCNN
+from pathlib import Path as path
 import tensorflow as tf
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from tensorflow.keras.models import model_from_json, load_model
-from mtcnn.mtcnn import MTCNN
-from pathlib import Path as path
 import json
-from PIL import ImageDraw, ImageFont
-from matplotlib import patches, patheffects
 import pdb ### Python debuger
 import os ### Navigate Through Dirrectory
 import numpy as np
@@ -19,6 +22,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import collections
 import cv2
+
 
 def crop_face(img, bb):
     x1, y1, width, height = bb
