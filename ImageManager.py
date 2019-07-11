@@ -24,7 +24,7 @@ import cv2
 
 class ImageManager:
     ### Class Constructor
-    def __init__(self, feature_extractor, face_detector, imgpaths = None, 
+    def __init__(self,  imgpaths ,feature_extractor = None, face_detector = None, 
                  img_rtpath = None, feat_rtpath = None):
         
         self.feature_extractor = feature_extractor
@@ -50,7 +50,10 @@ class ImageManager:
         self.feat1 = None
         self.feat2 = None
         self.sample_labels = []
+        ### Face Detector performance
         self.undetected_faces = []
+        self.face_detector_error = None
+        
         
     def detect_faces(self, img):
         results = self.face_detector.detect_faces(img)
@@ -81,6 +84,7 @@ class ImageManager:
                     else:
                         os.mkdir(self.feature_rt_path+"/"+i[:7])
                         np.save( self.feature_rt_path+"/"+i+".npy", feature)
+
 
     def normalize(self, img):
         """
@@ -118,6 +122,7 @@ class ImageManager:
             return random.choices(tmp, k = k)
         print("OOPS it broke")
         return None
+            
     def update_samples(self,sample, label):
         """
         Update sample values(Mutator funtion)
@@ -177,3 +182,9 @@ class ImageManager:
     
     def get_features(self):
         return (self.feat1, self.feat2, self.sample_labels)
+    
+    def compute_face_detector_error(self):
+        for i in self.imgpaths:
+            if (os.path.isfile("test/image_features/"+ i[:-4]+".jpg.npy")):
+                self.detected_faces.append(i)
+        
