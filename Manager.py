@@ -46,6 +46,8 @@ class ImageManager:
             self.classmap[i] = np.where(self.c == i)
         self.sample_feat1 = []
         self.sample_feat2 = []
+        self.sample_paths1 = None
+        self.sample_paths2 = None
         self.feat1 = None
         self.feat2 = None
         self.sample_labels = []
@@ -174,7 +176,7 @@ class ImageManager:
         else:
             self.undetected_faces.append("test/image_features/"+ img_sam[0][:-4]+".jpg.npy")
         for i in img_sam[1:]:
-            if (os.path.isfile("test/image_features/"+ i[:-4]+".jpg.npy") == True):
+            if(os.path.isfile("test/image_features/"+ i[:-4]+".jpg.npy") == True):
                 imf1 = np.load("test/image_features/"+ i[:-4]+".jpg.npy")###
                 imf = np.vstack([imf, imf1])
             else:
@@ -184,12 +186,18 @@ class ImageManager:
     def get_features(self):
         return (self.feat1, self.feat2, self.sample_labels)
     
-    def compute_face_detector_error(self):
+    def face_detection_check(self):
+        """
+        Gets all the detected and undetected faces
+        """
         for i in self.imgpaths:
             if (os.path.isfile("test/image_features/"+ i[:-4]+".jpg.npy")):
                 self.detected_faces.append(i)
+            else: 
+                self.undected_faces.append(i)
         ### update class map
     def update_matainfo(self):
+        self.face_detection_check()
         idty = []
         for i in self.detected_faces:
             idty.append(i.split("/"))
@@ -201,3 +209,8 @@ class ImageManager:
         self.classmap = {}### class to index mapping
         for i in self.classes:
             self.classmap[i] = np.where(self.c == i)
+    def save_sample_image_paths(self):
+        tmp = np.array(self.detected_faces)
+        sample_paths1 = tmp[self.sample_feat1]
+        sample_paths2 = tmp[self.sample_feat2]
+        return {"path1": sample_path1, "path2": sample_path2}
