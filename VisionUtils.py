@@ -52,8 +52,7 @@ def show_img(img, figsize=None, ax=None):
     ax.get_yaxis().set_visible(False)
     return ax
 
-def detect_faces(img):
-    detector = MTCNN()
+def detect_faces(img, detector):
     results = detector.detect_faces(img)
     bb_lst =[]
     for i in results:

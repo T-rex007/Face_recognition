@@ -74,7 +74,7 @@ class ImageManager:
         return image_features
     def extract_all_faetures(self): ###To be tested
         for i in self.imgpaths:
-            if(os.path.isfile(self.feature_rt_path+"/"+i+".npy") ==True):
+            if(os.path.isfile(self.feature_rt_path+"/"+i[:-4]+".npy") ==True):
                 continue
             else:
                 img = plt.imread(self.imgrt_path+"/" + i)
@@ -83,10 +83,10 @@ class ImageManager:
                     feature = self.extract_feature(model, img, bb_lst[i1])
                     ###check to see if dirrectory e
                     if os.path.isdir(self.feature_rt_path+"/"+i[:7]):
-                        np.save(self.feature_rt_path+"/"+i+".npy", feature)
+                        np.save(self.feature_rt_path+"/"+i[:-4]+".npy", feature)
                     else:
                         os.mkdir(self.feature_rt_path+"/"+i[:7])
-                        np.save( self.feature_rt_path+"/"+i+".npy", feature)
+                        np.save( self.feature_rt_path+"/"+i[:-4]+".npy", feature)
 
 
     def normalize(self, img):
@@ -156,31 +156,31 @@ class ImageManager:
         ### Obtaining feature1
         img_sam = np.array(self.detected_faces)[self.sample_feat1]
         img_sam = list(img_sam)
-        if(os.path.isfile("test/image_features/"+ img_sam[0][:-4]+".jpg.npy") == True):
-            imf = np.load("test/image_features/"+ img_sam[0][:-4]+".jpg.npy")###
+        if(os.path.isfile("test/image_features/"+ img_sam[0][:-4]+".npy") == True):
+            imf = np.load("test/image_features/"+ img_sam[0][:-4]+".npy")###
         else:
-            self.undetected_faces.append("test/image_features/"+ img_sam[0][:-4]+".jpg.npy")
+            self.undetected_faces.append("test/image_features/"+ img_sam[0][:-4]+".npy")
         for i in img_sam[1:]:
-            if (os.path.isfile("test/image_features/"+ i[:-4]+".jpg.npy") == True):
-                imf1 = np.load("test/image_features/"+ i[:-4]+".jpg.npy")###
+            if (os.path.isfile("test/image_features/"+ i[:-4]+".npy") == True):
+                imf1 = np.load("test/image_features/"+ i[:-4]+".npy")###
                 imf = np.vstack([imf, imf1])
             else:
-                self.undetected_faces.append("test/image_features/"+ i[:-4]+".jpg.npy")
+                self.undetected_faces.append("test/image_features/"+ i[:-4]+".npy")
         self.feat1 = imf
         
         ### Loading feat2
         img_sam = np.array(self.detected_faces)[self.sample_feat2]
         img_sam = list(img_sam)
-        if(os.path.isfile("test/image_features/"+ img_sam[0][:-4]+".jpg.npy") == True):
-            imf = np.load("test/image_features/"+ img_sam[0][:-4]+".jpg.npy")###
+        if(os.path.isfile("test/image_features/"+ img_sam[0][:-4]+".npy") == True):
+            imf = np.load("test/image_features/"+ img_sam[0][:-4]+".npy")###
         else:
-            self.undetected_faces.append("test/image_features/"+ img_sam[0][:-4]+".jpg.npy")
+            self.undetected_faces.append("test/image_features/"+ img_sam[0][:-4]+".npy")
         for i in img_sam[1:]:
-            if(os.path.isfile("test/image_features/"+ i[:-4]+".jpg.npy") == True):
-                imf1 = np.load("test/image_features/"+ i[:-4]+".jpg.npy")###
+            if(os.path.isfile("test/image_features/"+ i[:-4]+".npy") == True):
+                imf1 = np.load("test/image_features/"+ i[:-4]+".npy")###
                 imf = np.vstack([imf, imf1])
             else:
-                self.undetected_faces.append("test/image_features/"+ i[:-4]+".jpg.npy")
+                self.undetected_faces.append("test/image_features/"+ i[:-4]+".npy")
         self.feat2 = imf
     
     def get_features(self):
@@ -191,7 +191,7 @@ class ImageManager:
         Gets all the detected and undetected faces
         """
         for i in self.imgpaths:
-            if (os.path.isfile("test/image_features/"+ i[:-4]+".jpg.npy")):
+            if (os.path.isfile("test/image_features/"+ i[:-4]+".npy")):
                 self.detected_faces.append(i)
             else: 
                 self.undected_faces.append(i)
