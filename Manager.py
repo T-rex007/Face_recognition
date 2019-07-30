@@ -59,6 +59,8 @@ class ImageManager:
         
         
     def detect_faces(self, img):
+        """
+        Returns BBox of images """
         results = self.face_detector.detect_faces(img)
         for i in results:
             self.bb_lst.append(i["box"])
@@ -73,15 +75,20 @@ class ImageManager:
             image_features.append(feature_extractor.predict(img))
         return image_features
     def extract_all_faetures(self): ###To be tested
+        """
+        Extracts all the features in imgpaths
+        """
         for i in self.imgpaths:
+            ###Check to see if image feature is already extracted
             if(os.path.isfile(self.feature_rt_path+"/"+i[:-4]+".npy") ==True):
                 continue
             else:
+
                 img = plt.imread(self.imgrt_path+"/" + i)
                 bb_lst = self.detect_faces(img)
                 for i1 in range(len(bb_lst)):
                     feature = self.extract_feature(model, img, bb_lst[i1])
-                    ###check to see if dirrectory e
+                    ###check to see if dirrectory exists
                     if os.path.isdir(self.feature_rt_path+"/"+i[:7]):
                         np.save(self.feature_rt_path+"/"+i[:-4]+".npy", feature)
                     else:
@@ -141,7 +148,11 @@ class ImageManager:
         self.sample_feat2 = self.sample_feat2 + sample[1]
         
     def balance_random_sample(self, k):
-        ### Positive sampling
+        """
+        Sample k possitive and negative samples in each class
+        Args:
+            k: Number of samples in each class
+        """
         for clss_idx in range(len(self.classes)):
             self.update_samples((self.random_sample(1, clss_idx, k),
                                  self.random_sample(1, clss_idx, k)),1)
