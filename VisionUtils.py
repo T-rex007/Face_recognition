@@ -25,12 +25,18 @@ import cv2
 
 
 def crop_face(img, bb):
+    """
+    Crop image given bounding box (x,y, width, height)
+    """
     x1, y1, width, height = bb
     x1,y1 = abs(x1), abs(y1)
     x2, y2 = x1 + width, y1 +height
     return img[y1:y2, x1:x2]
 
 def extract_feature( feature_extractor, img, bb):
+    """
+    Extract features given img, bounding box and feature extractor
+    """
     insz = feature_extractor.input_shape
     img = crop_face(img, bb)
     img = resize(img,(insz[1],insz[2]))

@@ -28,9 +28,7 @@ class ImageManager:
         
         self.feature_extractor = feature_extractor
         self.face_detector = face_detector
-        self.bb_lst = []
         self.im_sz = feature_extractor.input_shape
-        self.img = None
         self.imgpaths = [str(i[0]) for i in imgpaths.values ]
         self.img_rtpath = img_rtpath
         self.feat_rtpaths = feat_rtpath
@@ -41,15 +39,19 @@ class ImageManager:
         self.c = df[0].values ### The class of each image
         self.classes = list(df[0].unique()) ### different class in dset
         self.min_class_count = min(df[0].value_counts())
-        self.classmap = {}### class to index mapping
+        ### class to index mapping
+        self.classmap = {}
         for i in self.classes:
             self.classmap[i] = np.where(self.c == i)
+        
+        ### indexes of the random sample of each feature
         self.sample_feat1 = []
         self.sample_feat2 = []
-        self.sample_paths1 = None
-        self.sample_paths2 = None
+      
+        ### Features
         self.feat1 = None
         self.feat2 = None
+        ### labels
         self.sample_labels = []
         ### Face Detector performance
         self.undetected_faces = []
@@ -60,7 +62,9 @@ class ImageManager:
         
     def detect_faces(self, img):
         """
-        Returns BBox of images """
+        Returns BBox list delimiting all the faces  in the image 
+        """
+        bb_lst = []
         results = self.face_detector.detect_faces(img)
         for i in results:
             self.bb_lst.append(i["box"])
@@ -208,7 +212,12 @@ class ImageManager:
                 self.undected_faces.append(i)
         ### update class map
     def update_matainfo(self):
+        """
+        Updates meat info about dataset i.e. self.classmap etc with the values of the detected faces
+        since the face_detector may have some errors
+        """
         self.face_detection_check()
+
         idty = []
         for i in self.detected_faces:
             idty.append(i.split("/"))
@@ -220,8 +229,12 @@ class ImageManager:
         self.classmap = {}### class to index mapping
         for i in self.classes:
             self.classmap[i] = np.where(self.c == i)
-    def save_sample_image_paths(self):
+
+    def get_sample_image_paths(self):
+        """
+        Returns the path to the images of the features that were extracted and return 
+        """
         tmp = np.array(self.detected_faces)
         sample_paths1 = tmp[self.sample_feat1]
         sample_paths2 = tmp[self.sample_feat2]
-        return {"path1": sample_path1, "path2": sample_path2}
+        return {"path1": sample_paths1, "path2": sample_paths2}
