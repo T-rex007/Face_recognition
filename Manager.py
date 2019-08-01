@@ -25,6 +25,12 @@ class ImageManager:
     ### Class Constructor
     def __init__(self,  imgpaths ,feature_extractor = None, face_detector = None, 
                  img_rtpath = None, feat_rtpath = None):
+        """
+        The ImageManger Object is a pipeline object for facial recognition from feature extraction
+        detection preprocessing
+        Args:
+        
+        """
         
         self.feature_extractor = feature_extractor
         self.face_detector = face_detector
