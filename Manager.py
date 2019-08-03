@@ -28,8 +28,6 @@ class ImageManager:
         """
         The ImageManger Object is a pipeline object for facial recognition from feature extraction
         detection preprocessing
-        Args:
-        
         """
         
         self.feature_extractor = feature_extractor
