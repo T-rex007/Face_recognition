@@ -6,3 +6,5 @@ Email: shaqc777@gmail.com
 
 8/4/2019
 Facial Recogniton model is saying My whole family are the same people
+Going foward i think would need to retrain the pretrained feature extractor on more faces people with indian 
+and african decent
