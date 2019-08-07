@@ -20,6 +20,7 @@ import collections
 import cv2
 import random
 import itertools
+from VisionUtils import *
 
 class ImageManager:
     ### Class Constructor
@@ -29,13 +30,12 @@ class ImageManager:
         The ImageManger Object is a pipeline object for facial recognition from feature extraction
         detection preprocessing
         """
-        
         self.feature_extractor = feature_extractor
         self.face_detector = face_detector
         self.im_sz = feature_extractor.input_shape
         self.imgpaths = [str(i[0]) for i in imgpaths.values ]
         self.img_rtpath = img_rtpath
-        self.feat_rtpaths = feat_rtpath
+        self.feat_rtpath = feat_rtpath
         idty = []
         for i in self.imgpaths:
             idty.append(i.split("/"))
@@ -71,37 +71,34 @@ class ImageManager:
         bb_lst = []
         results = self.face_detector.detect_faces(img)
         for i in results:
-            self.bb_lst.append(i["box"])
+            bb_lst.append(i["box"])
         return bb_lst
     
-    def extract_feature(self, img):
-        image_features = []
-        for i in range(len(bb_lst)):
-            img = crop_face(img, bb_lst[i])
-            img = resize(img,(self.im_sz[1],im_sz[2]))
-            img = normalize(img).reshape((1, im_sz[1],im_sz[2], im_sz[3]))
-            image_features.append(feature_extractor.predict(img))
-        return image_features
-    def extract_all_faetures(self): ###To be tested
+    def extract_feature(self, img, bb):
+        img = self.crop_face(img, bb)
+        img = resize(img,(self.im_sz[1],self.im_sz[2]))
+        img = self.normalize(img).reshape((1, self.im_sz[1],self.im_sz[2], self.im_sz[3]))
+        return self.feature_extractor.predict(img)
+    def extract_all_features(self): ###To be tested
         """
         Extracts all the features in imgpaths
         """
         for i in self.imgpaths:
             ###Check to see if image feature is already extracted
-            if(os.path.isfile(self.feature_rt_path+"/"+i[:-4]+".npy") ==True):
+            if(os.path.isfile(self.feat_rtpath+"/"+i[:-4]+".npy") ==True):
                 continue
             else:
 
-                img = plt.imread(self.imgrt_path+"/" + i)
+                img = plt.imread(self.img_rtpath+"/" + i)
                 bb_lst = self.detect_faces(img)
                 for i1 in range(len(bb_lst)):
-                    feature = self.extract_feature(model, img, bb_lst[i1])
+                    feature = self.extract_feature(img, bb_lst[i1])
                     ###check to see if dirrectory exists
-                    if os.path.isdir(self.feature_rt_path+"/"+i[:7]):
-                        np.save(self.feature_rt_path+"/"+i[:-4]+".npy", feature)
+                    if os.path.isdir(self.feat_rtpath+"/"+i[:7]):
+                        np.save(self.feat_rtpath+"/"+i[:-4]+".npy", feature)
                     else:
-                        os.mkdir(self.feature_rt_path+"/"+i[:7])
-                        np.save( self.feature_rt_path+"/"+i[:-4]+".npy", feature)
+                        os.mkdir(self.feat_rtpath+"/"+i[:7])
+                        np.save( self.feat_rtpath+"/"+i[:-4]+".npy", feature)
 
 
     def normalize(self, img):
@@ -109,18 +106,15 @@ class ImageManager:
         Normalize the image pixels values between  1 and 0
         """
         return img/255
-    
-    def crop_face(self,img):
+
+    def crop_face(self,img, bb):
         """
         Crop the area delimited by the the bounding box bb
         """
-        im_lst = []
-        for i in range(len(bb)):
-            x1, y1, width, height = bb[i]
-            x1,y1 = abs(x1), abs(y1)
-            x2, y2 = x1 + width, y1 + height
-            im_lst.append(img[y1:y2, x1:x2])
-        return im_lst
+        x1, y1, width, height = bb
+        x1,y1 = abs(x1), abs(y1)
+        x2, y2 = x1 + width, y1 + height
+        return img[y1:y2,x1:x2]
     
     def random_sample(self,label, classidx, k):
         """
@@ -175,31 +169,31 @@ class ImageManager:
         ### Obtaining feature1
         img_sam = np.array(self.detected_faces)[self.sample_feat1]
         img_sam = list(img_sam)
-        if(os.path.isfile("test/image_features/"+ img_sam[0][:-4]+".npy") == True):
-            imf = np.load("test/image_features/"+ img_sam[0][:-4]+".npy")###
+        if(os.path.isfile(self.feat_rtpath+ img_sam[0][:-4]+".npy") == True):
+            imf = np.load(self.feat_rtpath+ img_sam[0][:-4]+".npy")###
         else:
-            self.undetected_faces.append("test/image_features/"+ img_sam[0][:-4]+".npy")
+            self.undetected_faces.append(self.feat_rtpath+ img_sam[0][:-4]+".npy")
         for i in img_sam[1:]:
-            if (os.path.isfile("test/image_features/"+ i[:-4]+".npy") == True):
-                imf1 = np.load("test/image_features/"+ i[:-4]+".npy")###
+            if (os.path.isfile(self.feat_rtpath+ i[:-4]+".npy") == True):
+                imf1 = np.load(self.feat_rtpath+ i[:-4]+".npy")###
                 imf = np.vstack([imf, imf1])
             else:
-                self.undetected_faces.append("test/image_features/"+ i[:-4]+".npy")
+                self.undetected_faces.append(feat_rtpath+ i[:-4]+".npy")
         self.feat1 = imf
         
         ### Loading feat2
         img_sam = np.array(self.detected_faces)[self.sample_feat2]
         img_sam = list(img_sam)
-        if(os.path.isfile("test/image_features/"+ img_sam[0][:-4]+".npy") == True):
-            imf = np.load("test/image_features/"+ img_sam[0][:-4]+".npy")###
+        if(os.path.isfile(self.feat_rtpath+ img_sam[0][:-4]+".npy") == True):
+            imf = np.load(self.feat_rtpath+ img_sam[0][:-4]+".npy")###
         else:
-            self.undetected_faces.append("test/image_features/"+ img_sam[0][:-4]+".npy")
+            self.undetected_faces.append(self.feat_rtpath+ img_sam[0][:-4]+".npy")
         for i in img_sam[1:]:
-            if(os.path.isfile("test/image_features/"+ i[:-4]+".npy") == True):
-                imf1 = np.load("test/image_features/"+ i[:-4]+".npy")###
+            if(os.path.isfile(self.feat_rtpath+ i[:-4]+".npy") == True):
+                imf1 = np.load(self.feat_rtpath+ i[:-4]+".npy")###
                 imf = np.vstack([imf, imf1])
             else:
-                self.undetected_faces.append("test/image_features/"+ i[:-4]+".npy")
+                self.undetected_faces.append(self.feat_rtpath+ i[:-4]+".npy")
         self.feat2 = imf
     
     def get_features(self):
@@ -210,12 +204,12 @@ class ImageManager:
         Gets all the detected and undetected faces
         """
         for i in self.imgpaths:
-            if (os.path.isfile("test/image_features/"+ i[:-4]+".npy")):
+            if (os.path.isfile(self.feat_rtpath+ i[:-4]+".npy")):
                 self.detected_faces.append(i)
             else: 
-                self.undected_faces.append(i)
-        ### update class map
-    def update_matainfo(self):
+                self.undetected_faces.append(i)
+        
+    def update_metainfo(self):
         """
         Updates meat info about dataset i.e. self.classmap etc with the values of the detected faces
         since the face_detector may have some errors
@@ -225,7 +219,7 @@ class ImageManager:
         idty = []
         for i in self.detected_faces:
             idty.append(i.split("/"))
-        print(idty)
+        
         df = pd.DataFrame(idty)
         self.c = df[0].values ### The class of each image
         self.classes = list(df[0].unique()) ### different class in dset

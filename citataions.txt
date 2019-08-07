@@ -1,0 +1,4 @@
+VGGFACE2  Dataset
+"Q. Cao, L. Shen, W. Xie, O. M. Parkhi, A. Zisserman  
+VGGFace2: A dataset for recognising face across pose and age  
+International Conference on Automatic Face and Gesture Recognition, 2018."
