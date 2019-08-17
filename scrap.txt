@@ -62,6 +62,12 @@ class ImageManager:
         self.detected_faces = []
         self.face_detector_error = None
         
+        ### Image Augmentation
+        from tensorflow.keras.preprocessing.image import ImageDataGenerator
+        self.datagen = ImageDataGenerator(
+            brightness_range = [10,100],
+            rotation_range= 15)
+        
         
         
     def detect_faces(self, img):
@@ -90,7 +96,15 @@ class ImageManager:
             else:
 
                 img = plt.imread(self.img_rtpath+"/" + i)
+                img = self.datagen.random_transform(img, seed = 42)
                 bb_lst = self.detect_faces(img)
+                if (len(bb_lst)>1):
+                    continue
+                elif(len(bb_lst)==0):
+                    self.undetected_faces.append(i)
+                    continue
+                else: 
+                    self.detected_faces.append(i)
                 for i1 in range(len(bb_lst)):
                     feature = self.extract_feature(img, bb_lst[i1])
                     ###check to see if dirrectory exists
@@ -143,9 +157,6 @@ class ImageManager:
                     eg.(feature_idx_list1, feature_idx_list2)
             label: Indicates the label of the input feature pair are 
         """
-        tmp = [label] * len(sample[0])
-        
-        self.sample_labels = self.sample_labels + tmp
         self.sample_feat1 = self.sample_feat1 + sample[0]
         self.sample_feat2 = self.sample_feat2 + sample[1]
         
@@ -178,7 +189,7 @@ class ImageManager:
                 imf1 = np.load(self.feat_rtpath+ i[:-4]+".npy")###
                 imf = np.vstack([imf, imf1])
             else:
-                self.undetected_faces.append(feat_rtpath+ i[:-4]+".npy")
+                self.undetected_faces.append(self.feat_rtpath+ i[:-4]+".npy")
         self.feat1 = imf
         
         ### Loading feat2
@@ -219,7 +230,6 @@ class ImageManager:
         idty = []
         for i in self.detected_faces:
             idty.append(i.split("/"))
-        
         df = pd.DataFrame(idty)
         self.c = df[0].values ### The class of each image
         self.classes = list(df[0].unique()) ### different class in dset
@@ -235,4 +245,11 @@ class ImageManager:
         tmp = np.array(self.detected_faces)
         sample_paths1 = tmp[self.sample_feat1]
         sample_paths2 = tmp[self.sample_feat2]
-        return {"path1": sample_paths1, "path2": sample_paths2}
+        paths = {"path1": sample_paths1, "path2": sample_paths2}
+        ### Update Labels
+        for i in range(len(paths["path1"])):
+            if (paths["path1"][i][:7] == paths["path2"][i][:7]):
+                self.sample_labels.append(1)
+            else:
+                self.sample_labels.append(0)
+        return paths
