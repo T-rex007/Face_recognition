@@ -253,3 +253,18 @@ class ImageManager:
             else:
                 self.sample_labels.append(0)
         return paths
+
+
+
+
+        """def getImageList(self):
+        """
+        Gets sub paths for all the images in IMG_RTPATH
+        """
+        img_path_list = []
+        folder_list = os.listdir(self.IMG_RTPATH)
+        for FOLDER in folder_list:
+            image_list_names = os.listdir(self.IMG_RTPATH + FOLDER)
+                for NAME in image_list_names:
+                    img_path_list.append(FOLDER+'/'+NAME)
+        return img_path_list"""
