@@ -51,7 +51,7 @@ def resize(img, size):
     return tmp1.numpy().reshape((size[0], size[1],tmp1.shape[-1]))
 
 def normalize(img):
-    return img/255
+    return img/255.0
 
 def show_img(img, figsize=None, ax=None):
     fig, ax = plt.subplots()
