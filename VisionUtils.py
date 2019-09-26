@@ -46,8 +46,16 @@ def extract_feature( feature_extractor, img, bb):
     image_feature = feature_extractor.predict(img)
     return image_feature
 
+
+def extract_feature( feature_extractor, img):
+    """
+    Extract features given img, bounding box and feature extractor
+    """
+    image_feature = feature_extractor.predict(img)
+    return image_feature
+
 def resize(img, size):
-    tmp1 = tf.image.resize(img, size)
+    tmp1 = cv2.resize(img, size)
     return tmp1.numpy().reshape((size[0], size[1],tmp1.shape[-1]))
 
 def normalize(img):
