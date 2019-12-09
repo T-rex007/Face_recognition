@@ -1,6 +1,4 @@
-Models/FaceNet/facenet_keras_weights.h5
-Models/FaceNet/facenet_keras.h5
-pics/t.jpg
+pics/
 data/
 face_rec_clean_branch/
 Feature_Extractor_trainer/
@@ -11,3 +9,5 @@ features/
 features3/
 features_motion_blur/
 pics/
+data_from_tyrel/
+Models/
