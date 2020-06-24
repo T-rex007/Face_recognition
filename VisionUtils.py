@@ -35,6 +35,17 @@ def crop_face(img, bb):
     x2, y2 = x1 + width, y1 +height
     return img[y1:y2, x1:x2]
 
+
+
+
+def extract_feature( feature_extractor, img):
+    """
+    Extract features given img, bounding box and feature extractor
+    """
+    image_feature = feature_extractor.predict(img)
+    return image_feature
+
+
 def extract_feature( feature_extractor, img, bb):
     """
     Extract features given img, bounding box and feature extractor
@@ -46,17 +57,9 @@ def extract_feature( feature_extractor, img, bb):
     image_feature = feature_extractor.predict(img)
     return image_feature
 
-
-def extract_feature( feature_extractor, img):
-    """
-    Extract features given img, bounding box and feature extractor
-    """
-    image_feature = feature_extractor.predict(img)
-    return image_feature
-
 def resize(img, size):
     tmp1 = cv2.resize(img, size)
-    return tmp1.numpy().reshape((size[0], size[1],tmp1.shape[-1]))
+    return tmp1.reshape((size[0], size[1],tmp1.shape[-1]))
 
 def normalize(img):
     return img/255.0
@@ -351,3 +354,33 @@ def add_spot_light(image, light_position=None, max_brightness=255, min_brightnes
     frame[frame > 255] = 255
     frame = np.asarray(frame, dtype=np.uint8)
     return frame
+
+
+### Test not betsy
+def verify(img_path, f1):
+    img = cv2.imread(img_path)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    bb = detect_faces(img, face_detector)
+    f2 = extract_feature(feature_extractor, img, bb[0])
+    pred = gboost.predict(transform(f1,f2))
+    pred_proba = gboost.predict_proba(transform(f1,f2))
+    print('pred: ', pred)
+    print('pred_proba: ', pred_proba)
+
+    if (int(pred) == 1):
+        isbetsy = "betsy"
+    else:
+         isbetsy = "not betsy"
+    a = show_img(img)
+    draw_bb(a, bb[0])
+    write_txt(a, (bb[0][0], bb[0][1]), isbetsy)
+
+def get_feat(face_detector , feature_extractor,  impath):
+    img = plt.imread(impath)
+    print(impath)
+    bb_lst = detect_faces(img, face_detector)
+    if (len(bb_lst)>1):
+        print("Error: more than one person detected in image")
+        print("please esure only one person is in the image or try another")
+    feature = extract_feature(feature_extractor, img ,bb_lst[0])    
+    return feature
